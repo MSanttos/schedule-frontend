@@ -105,10 +105,10 @@ export const EditUserAccount = () => {
   };
 
 
-  const handleSubmitGoBack= async (e: React.FormEvent) => {
-      e.preventDefault();
-      navigate('/'); // volta para home
-    };
+  const handleSubmitGoBack = async (e: React.FormEvent) => {
+    e.preventDefault();
+    navigate('/'); // volta para home
+  };
 
   // No seu componente
   useEffect(() => {
@@ -117,51 +117,53 @@ export const EditUserAccount = () => {
     };
   }, [dispatch]);
   return (
-    <div className="max-w-3xl mx-auto mt-10 p-6 bg-white shadow-md rounded-xl">
-      <h1 className="text-2xl font-bold mb-4">Editar Usuário</h1>
-      <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <input name="name" value={formData.name} onChange={handleChange} placeholder="Nome" className="input" />
-        <input name="email" value={formData.email} onChange={handleChange} placeholder="E-mail" className="input" />
-        <input name="password" value={formData.password} onChange={handleChange} placeholder="Senha" type="password" className="input" />
-        <input name="birthDate" type="date" value={formData.birthDate} onChange={handleChange} className="input" />
-        <input name="nationality" value={formData.nationality} onChange={handleChange} placeholder="Nacionalidade" className="input" />
-        <input name="naturalness" value={formData.city} onChange={handleChange} placeholder="Naturalidade" className="input" />
-        <input name="cpf" value={formData.cpf} onChange={handleChange} placeholder="CPF" className="input" />
-        {/* <input name="rg" value={formData.rg} onChange={handleChange} placeholder="RG" className="input" /> */}
-        <input name="phoneNumber" value={formData.phoneNumber} onChange={handleChange} placeholder="Telefone" className="input" />
-        {/* <input name="cellPhone" value={formData.cellPhone} onChange={handleChange} placeholder="Celular" className="input" /> */}
-        <input name="postalCode" value={formData.postalCode} onChange={handleChange} placeholder="CEP" className="input" />
-        <input name="address" value={formData.address} onChange={handleChange} placeholder="Endereço" className="input" />
-        {/* <input name="number" value={formData.number} onChange={handleChange} placeholder="Número" className="input" /> */}
-        {/* <input name="complement" value={formData.complement} onChange={handleChange} placeholder="Complemento" className="input" /> */}
-        {/* <input name="neighborhood" value={formData.neighborhood} onChange={handleChange} placeholder="Bairro" className="input" /> */}
-        <input name="city" value={formData.city} onChange={handleChange} placeholder="Cidade" className="input" />
-        <input name="state" value={formData.state} onChange={handleChange} placeholder="Estado" className="input" />
-        <select name="gender" value={formData.gender} onChange={handleChange} className="input">
-          <option value={0}>Não informado</option>
-          <option value={1}>Masculino</option>
-          <option value={2}>Feminino</option>
-        </select>
-        <select name="maritalStatus" value={formData.maritalStatus} onChange={handleChange} className="input">
-          <option value={0}>Não informado</option>
-          <option value={1}>Solteiro(a)</option>
-          <option value={2}>Casado(a)</option>
-          <option value={3}>Divorciado(a)</option>
-        </select>
-        <button type="submit" className="col-span-2 bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
-          Salvar Alterações
-        </button>
-      </form>
-      <br />
-      <div>
-        <button
-          onClick={(e) => handleSubmitGoBack(e)}
-          className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded"
-        >
-          Voltar
-        </button>
+    <div>
+      <div className="max-w-3xl mx-auto mt-10 p-6 bg-white shadow-md rounded-xl">
+        <h1 className="text-2xl font-bold mb-4">Editar Usuário</h1>
+        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <input name="name" value={formData.name} onChange={handleChange} placeholder="Nome" className="input" />
+          <input name="email" value={formData.email} onChange={handleChange} placeholder="E-mail" className="input" />
+          <input name="password" value={formData.password} onChange={handleChange} placeholder="Senha" type="password" className="input" />
+          <input name="birthDate" type="date" value={formData.birthDate} onChange={handleChange} className="input" />
+          <input name="nationality" value={formData.nationality} onChange={handleChange} placeholder="Nacionalidade" className="input" />
+          <input name="naturalness" value={formData.city} onChange={handleChange} placeholder="Naturalidade" className="input" />
+          <input name="cpf" value={formData.cpf} onChange={handleChange} placeholder="CPF" className="input" />
+          {/* <input name="rg" value={formData.rg} onChange={handleChange} placeholder="RG" className="input" /> */}
+          <input name="phoneNumber" value={formData.phoneNumber} onChange={handleChange} placeholder="Telefone" className="input" />
+          {/* <input name="cellPhone" value={formData.cellPhone} onChange={handleChange} placeholder="Celular" className="input" /> */}
+          <input name="postalCode" value={formData.postalCode} onChange={handleChange} placeholder="CEP" className="input" />
+          <input name="address" value={formData.address} onChange={handleChange} placeholder="Endereço" className="input" />
+          {/* <input name="number" value={formData.number} onChange={handleChange} placeholder="Número" className="input" /> */}
+          {/* <input name="complement" value={formData.complement} onChange={handleChange} placeholder="Complemento" className="input" /> */}
+          {/* <input name="neighborhood" value={formData.neighborhood} onChange={handleChange} placeholder="Bairro" className="input" /> */}
+          <input name="city" value={formData.city} onChange={handleChange} placeholder="Cidade" className="input" />
+          <input name="state" value={formData.state} onChange={handleChange} placeholder="Estado" className="input" />
+          <select name="gender" value={formData.gender} onChange={handleChange} className="input">
+            <option value={0}>Não informado</option>
+            <option value={1}>Masculino</option>
+            <option value={2}>Feminino</option>
+          </select>
+          <select name="maritalStatus" value={formData.maritalStatus} onChange={handleChange} className="input">
+            <option value={0}>Não informado</option>
+            <option value={1}>Solteiro(a)</option>
+            <option value={2}>Casado(a)</option>
+            <option value={3}>Divorciado(a)</option>
+          </select>
+          <button type="submit" className="col-span-2 bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
+            Salvar Alterações
+          </button>
+        </form>
+        <br />
+        <div>
+          <button
+            onClick={(e) => handleSubmitGoBack(e)}
+            className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded"
+          >
+            Voltar
+          </button>
+        </div>
+        <br />
       </div>
-      <br />
     </div>
   );
 };

@@ -45,6 +45,8 @@ export const CreateUser = () => {
       ...form,
       gender: form.gender ? Number(form.gender) : undefined,
       maritalStatus: form.maritalStatus ? Number(form.maritalStatus) : undefined,
+      country: '', // Add default or dynamic value for country
+      streetAddress: '', // Add default or dynamic value for streetAddress
     };
 
     await dispatch(createUserAccount(parsedForm));

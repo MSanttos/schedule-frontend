@@ -25,6 +25,25 @@ npm install -D @types/react-router-dom
 
 npm install axios
 
+npm install @headlessui/react
+npm install @heroicons/react
+npm install lucide-react
+npm install classnames
+npm install @radix-ui/react-primitive
+npm install classnames
+npm install -D @tailwindcss/typography
+npm install -D @tailwindcss/forms
+npm install -D @tailwindcss/aspect-ratio
+npm install tailwindcss @tailwindcss/vite
+npm install tailwindcss @tailwindcss/cli
+npx @tailwindcss/cli -i ./src/input.css -o ./src/output.css --watch
+npm install -D tailwindcss@3.3.3 // aqui funcionou
+npm install -D postcss-nested
+
+/src/input.css
+
+@import 'tailwindcss';
+
 npm run dev
 ```
 
@@ -175,3 +194,77 @@ Essa estrutura de projeto permite que você escale sua aplicação conforme ela 
 📦 Build e Deploy
 
 🙋 Contribuição
+
+✅ Padrão de Stack Frontend Profissional (Mercado Americano)
+🧱 Base do Projeto
+
+    React (com TypeScript) → padrão absoluto em empresas modernas.
+
+    Vite ou Next.js (Vite para SPAs rápidas, Next.js para SSR/SSG e SEO).
+
+    TypeScript → segurança de tipos, facilita manutenção e refatorações.
+
+🎨 Estilização (UI/UX)
+
+    Tailwind CSS → padrão atual para estilização rápida, responsiva e moderna.
+
+    Headless UI → componentes acessíveis e sem estilo, ideal para Tailwind.
+
+    Radix UI → alternativa ao Headless, muito usada para acessibilidade.
+
+    Heroicons ou Lucide → ícones SVG prontos para Tailwind.
+
+🌲 Gerenciamento de Estado
+
+    Redux Toolkit (RTK Query incluso, se usar API REST).
+
+    Zustand → alternativa leve, muito popular também.
+
+    React Query (TanStack Query) → padrão para requisições e cache de dados, principalmente com APIs REST ou GraphQL.
+
+🌐 Comunicação com APIs
+
+    Axios → ainda muito usado, mas cada vez mais substituído por:
+
+    Fetch + React Query (TanStack Query) → gestão completa de cache, loading, retries etc.
+
+🔐 Autenticação
+
+    JWT + HTTP-only cookies (com backend)
+
+    Clerk, Auth0, ou NextAuth.js (em projetos com Next.js)
+
+🧪 Testes
+
+    Jest + React Testing Library → para testes unitários e de componentes.
+
+    Cypress → para testes end-to-end.
+
+🧰 Outras Ferramentas Comuns
+
+    ESLint + Prettier → padronização de código.
+
+    Husky + lint-staged → garantir qualidade no commit.
+
+    Storybook → desenvolvimento e documentação de componentes UI.
+
+    Playwright → testes de browser avançados (crescendo muito no mercado).
+
+☁️ Hospedagem
+
+    Vercel → padrão para Next.js.
+
+    Netlify, Render, AWS Amplify → outras opções comuns.
+💡 Exemplo de Stack Completa
+```ts
+{
+  framework: "React + Vite",
+  language: "TypeScript",
+  styling: ["Tailwind CSS", "Headless UI", "Heroicons"],
+  stateManagement: "Redux Toolkit + RTK Query",
+  api: "REST com Axios ou Fetch + React Query",
+  auth: "JWT + Cookies",
+  testing: ["Jest", "Cypress"],
+  tools: ["ESLint", "Prettier", "Husky", "Storybook"]
+}
+```

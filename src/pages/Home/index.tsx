@@ -49,13 +49,13 @@ export const Home = () => {
     <div className="w-full px-4 py-10 flex flex-col items-center">
       <div className="w-full max-w-7xl mb-4 flex justify-end">
         <button
-          onClick={() => navigate('/create')}
-          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+          onClick={() => navigate('/create-user')}
+          className="bg-green-400 text-white px-4 py-2 rounded hover:bg-green-700"
         >
           Criar Usuário
         </button>
       </div>
-      <div className="w-full max-w-7xl overflow-x-auto shadow-lg rounded-2xl border border-gray-200 dark:border-gray-700">
+      <div className="w-full overflow-x-auto shadow-lg rounded-2xl border border-gray-200 dark:border-gray-700">
         <table className="w-full min-w-[900px] bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
           <thead className="bg-gray-100 dark:bg-gray-800">
             <tr>
