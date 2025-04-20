@@ -153,6 +153,14 @@ Tipagens globais que garantem a segurança dos tipos em toda a aplicação.
 
 Essa estrutura de projeto permite que você escale sua aplicação conforme ela cresce, mantendo o código organizado e de fácil manutenção.
 
+✅ Comandos importantes no git
+- Adicionar o .env no .gitignore
+* .env*
+
+#### Revover algo do git
+- git rm --cached .env(nome do arquivo)
+- git commit -m "Removendo .env do versionamento"
+- git push
 
 ✅ Descrição do Projeto
 
