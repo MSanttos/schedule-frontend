@@ -1,9 +1,30 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Router } from './Router'
 import { BrowserRouter } from 'react-router-dom'
 
 import './App.css'
+import { useEffect, useState } from 'react'
 
 function App() {
+  const [path, setPath] = useState(window.location.pathname)
+
+  useEffect(() => {
+    // Esta função intercepta as mudanças de rota
+    const handleRouteChange = () => {
+      setPath(window.location.pathname)
+      // Força a URL a sempre aparecer como a raiz
+      if (window.location.pathname !== '/') {
+        window.history.replaceState(null, '', '/')
+      }
+    }
+
+    // Ouvinte para mudanças de rota
+    window.addEventListener('popstate', handleRouteChange)
+
+    return () => {
+      window.removeEventListener('popstate', handleRouteChange)
+    }
+  }, [])
 
   return (
     <>

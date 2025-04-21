@@ -39,6 +39,7 @@ npm install tailwindcss @tailwindcss/cli
 npx @tailwindcss/cli -i ./src/input.css -o ./src/output.css --watch
 npm install -D tailwindcss@3.3.3 // aqui funcionou
 npm install -D postcss-nested
+npm install lucide-react
 
 /src/input.css
 
