@@ -121,6 +121,91 @@ module.exports = {
 └── /types                   # Tipagens globais (ex: User, ResponseData, etc.)
     └── index.d.ts
 ```
+ou
+```bash
+src/
+│
+├── assets/
+├── components/
+│   ├── Layout/
+│   ├── Header/
+│   ├── Footer/
+│   └── shared/         # ✅ Componentes reutilizáveis (ex: Button, Input)
+│
+├── constants/          # ✅ Enums, mensagens, configs fixas
+│
+├── features/
+│   └── userAccount/
+│       ├── userAccountSlice.ts
+│       ├── userAccountThunks.ts
+│       ├── userAccountSelectors.ts
+│       └── index.ts
+│
+├── hooks/              # Custom hooks
+│
+├── pages/
+│   ├── CreateUser/
+│   ├── Edit/
+│   └── Home/
+│
+├── services/
+│   └── api.ts
+│
+├── store/
+│   ├── store.ts
+│
+├── types/
+│   └── user.ts
+│
+├── utils/              # ✅ Funções utilitárias
+│   └── formatDate.ts
+│
+├── App.tsx
+├── index.tsx
+├── Router.tsx
+```
+ou
+```bash
+src/
+│
+├── app/                           # Setup geral da aplicação
+│   ├── store.ts                   # Configuração da store Redux
+│   └── hooks.ts                   # Hooks do Redux
+│
+├── shared/                        # Recursos compartilhados
+│   ├── components/                # Componentes reutilizáveis (Button, Modal, Input etc.)
+│   ├── utils/                     # Funções utilitárias
+│   ├── constants/                 # Constantes globais
+│   └── types/                     # Tipagens reutilizáveis
+│
+├── features/                      # Cada "domínio" ou "módulo"
+│   └── userAccount/               # Feature UserAccount
+│       ├── components/            # Componentes específicos do domínio
+│       │   └── UserAccountList.tsx
+│       ├── pages/                 # Páginas específicas (Create, Edit, List etc.)
+│       │   ├── CreateUser.tsx
+│       │   ├── EditUser.tsx
+│       │   └── UserList.tsx
+│       ├── api/                   # Chamada à API (services)
+│       │   └── userAccountApi.ts
+│       ├── store/                 # Redux Toolkit (slice, thunk)
+│       │   ├── slice.ts
+│       │   ├── thunks.ts
+│       │   └── selectors.ts
+│       ├── types/                 # Tipagens do domínio
+│       │   └── index.ts
+│       └── index.ts               # Barrel de exportação
+│
+├── routes/                        # Arquivos de rotas e config
+│   └── index.tsx
+│
+├── layouts/                       # Layouts principais (ex: com menu, sem menu etc.)
+│   └── MainLayout.tsx
+│
+├── assets/                        # Imagens, fontes, etc
+│
+└── main.tsx                       # Entry point
+```
 
 ### 1. Indice
 # Estrutura de Projeto
