@@ -1,34 +1,6 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { api } from '../../services/api';
-
-export interface UserAccount {
-  country: string;
-  streetAddress: string;
-  id?: string;
-  name: string;
-  email: string;
-  password: string;
-  birthDate: string;
-  nationality: string;
-  naturalness: string;
-  cpf: string;
-  rg: string;
-  phone: string;
-  cellPhone: string;
-  zipCode: string;
-  address: string;
-  number: string;
-  complement: string;
-  neighborhood: string;
-  city: string;
-  state: string;
-  gender: any;
-  maritalStatus: any;
-  createdBy: string;
-  phoneNumber: string;
-  postalCode: string;
-}
+import { createSlice } from '@reduxjs/toolkit';
+import { fetchUserAccounts, fetchUserAccountById, createUserAccount, updateUserAccount, deleteUserAccount } from '../thunks/AccountThunks';
+import { UserAccount } from '../../types/userAccountTypes';
 
 interface UserAccountState {
   list: UserAccount[];
@@ -44,71 +16,6 @@ const initialState: UserAccountState = {
   selectedUser: null,
 };
 
-// GET ALL
-export const fetchUserAccounts = createAsyncThunk(
-  'userAccounts/fetchAll',
-  async (_, thunkAPI) => {
-    try {
-      const response = await api.get('/api/user-account/getAll');
-      return response.data;
-    } catch (error: any) {
-      return thunkAPI.rejectWithValue(error.message);
-    }
-  }
-);
-
-// GET BY ID
-export const fetchUserAccountById = createAsyncThunk(
-  'userAccounts/fetchById',
-  async (userId: string, thunkAPI) => {
-    try {
-      const response = await api.get(`/api/user-account/getById/${userId}`);
-      return response.data;
-    } catch (error: any) {
-      return thunkAPI.rejectWithValue(error.message);
-    }
-  }
-);
-
-// CREATE
-export const createUserAccount = createAsyncThunk(
-  'userAccounts/create',
-  async (newUser: UserAccount, thunkAPI) => {
-    try {
-      const response = await api.post('/api/user-account/create', newUser);
-      return response.data;
-    } catch (error: any) {
-      return thunkAPI.rejectWithValue(error.message);
-    }
-  }
-);
-
-// UPDATE
-export const updateUserAccount = createAsyncThunk(
-  'userAccounts/update',
-  async (userData: UserAccount, thunkAPI) => {
-    try {
-      const response = await api.put(`/api/user-account/update/${userData.id}`, userData);
-      return response.data;
-    } catch (error: any) {
-      return thunkAPI.rejectWithValue(error.message);
-    }
-  }
-);
-
-// DELETE
-export const deleteUserAccount = createAsyncThunk(
-  'userAccounts/delete',
-  async (userId: string, thunkAPI) => {
-    try {
-      await api.delete(`/api/user-account/delete/${userId}`);
-      return userId;
-    } catch (error: any) {
-      return thunkAPI.rejectWithValue(error.message);
-    }
-  }
-);
-
 const userAccountSlice = createSlice({
   name: 'userAccounts',
   initialState,
@@ -119,7 +26,6 @@ const userAccountSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // Fetch All
       .addCase(fetchUserAccounts.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -133,7 +39,6 @@ const userAccountSlice = createSlice({
         state.error = action.payload as string || 'Erro ao carregar usuários';
       })
 
-      // Fetch By ID
       .addCase(fetchUserAccountById.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -147,7 +52,6 @@ const userAccountSlice = createSlice({
         state.error = action.payload as string || 'Erro ao carregar usuário';
       })
 
-      // Create
       .addCase(createUserAccount.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -161,7 +65,6 @@ const userAccountSlice = createSlice({
         state.error = action.payload as string || 'Erro ao criar usuário';
       })
 
-      // Update
       .addCase(updateUserAccount.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -180,7 +83,6 @@ const userAccountSlice = createSlice({
         state.error = action.payload as string || 'Erro ao atualizar usuário';
       })
 
-      // Delete
       .addCase(deleteUserAccount.pending, (state) => {
         state.loading = true;
         state.error = null;
