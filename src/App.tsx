@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Router } from './Router'
+import { Router } from './routes'
 import { BrowserRouter } from 'react-router-dom'
 
 import './App.css'
