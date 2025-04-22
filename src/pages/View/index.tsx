@@ -1,25 +1,9 @@
+import axios from "axios";
+import { ArrowLeft, Calendar, CreditCard, Edit, Flag, Heart, Home, Mail, MapPin, Phone, User } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import axios from "axios";
-import { ArrowLeft, Edit, User, Mail, Phone, Calendar, MapPin, Flag, Heart, Home, CreditCard } from "lucide-react";
 import { useMaskedNavigation } from "../../hooks/useMaskedNavigation";
-
-interface UserDetails {
-  id: string;
-  name: string;
-  email: string;
-  phoneNumber: string;
-  birthDate: string;
-  nationality: string;
-  city: string;
-  state: string;
-  postalCode: string;
-  gender: number;
-  maritalStatus: number;
-  streetAddress: string;
-  country: string;
-  cpf: string;
-}
+import { UserDetails } from "../../models/user";
 
 const getGenderLabel = (gender: number) => {
   return gender === 1 ? "Masculino" : gender === 2 ? "Feminino" : "Não informado";

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { api } from '../../api/api';
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { UserAccount } from '../../types/userAccountTypes';
+import { api } from '../../api/api';
+import { UserAccount } from '../../models/userAccountTypes';
 
 // GET ALL
 export const fetchUserAccounts = createAsyncThunk(

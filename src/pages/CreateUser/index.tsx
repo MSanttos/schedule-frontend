@@ -1,10 +1,10 @@
-import { User, Mail, Lock, Calendar, Flag, MapPin, Phone, CreditCard, Home, FileUser, MapPinHouse, MapPinCheck, Earth, Building2, MapPinned, MapPlus } from "lucide-react";
+import { Building2, Calendar, CreditCard, Earth, FileUser, Flag, Home, Lock, Mail, MapPin, MapPinCheck, MapPinHouse, MapPinned, MapPlus, Phone, User } from "lucide-react";
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { useMaskedNavigation } from "../../hooks/useMaskedNavigation";
+import { defaultUserForm, IUserForm } from "../../models/user";
 import { AppDispatch } from '../../store/store';
 import { createUserAccount } from '../../store/thunks/AccountThunks';
-import { useMaskedNavigation } from "../../hooks/useMaskedNavigation";
-import { defaultUserForm, IUserForm } from "../../types/user";
 
 export const CreateUser = () => {
   const dispatch = useDispatch<AppDispatch>();

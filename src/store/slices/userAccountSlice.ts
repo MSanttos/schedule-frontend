@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { fetchUserAccounts, fetchUserAccountById, createUserAccount, updateUserAccount, deleteUserAccount } from '../thunks/AccountThunks';
-import { UserAccount } from '../../types/userAccountTypes';
+import { UserAccount } from '../../models/userAccountTypes';
+import { createUserAccount, deleteUserAccount, fetchUserAccountById, fetchUserAccounts, updateUserAccount } from '../thunks/AccountThunks';
 
 interface UserAccountState {
   list: UserAccount[];
