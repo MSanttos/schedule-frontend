@@ -2,7 +2,7 @@ import { User, Mail, Lock, Calendar, Flag, MapPin, Phone, CreditCard, Home, File
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../../store/store';
-import { createUserAccount } from '../../store/slices/userAccountSlice';
+import { createUserAccount } from '../../store/thunks/AccountThunks';
 import { useMaskedNavigation } from "../../hooks/useMaskedNavigation";
 import { defaultUserForm, IUserForm } from "../../types/user";
 
@@ -57,12 +57,15 @@ export const CreateUser = () => {
     try {
       const parsedForm = {
         ...form,
-        gender: form.gender ? Number(form.gender) : undefined,
-        maritalStatus: form.maritalStatus ? Number(form.maritalStatus) : undefined,
+        gender: form.gender ? Number(form.gender) : 0, // Default to 0 if undefined
+        maritalStatus: form.maritalStatus ? Number(form.maritalStatus) : 0, // Default to 0 if undefined
         country: 'Brasil', // Valor padrão
         streetAddress: form.address, // Mapeando address para streetAddress
         phone: form.phoneNumber, // Adicionando phone
-        zipCode: form.postalCode // Adicionando zipCode
+        zipCode: form.postalCode, // Adicionando zipCode
+        id: '', // Placeholder for id
+        createdAt: new Date().toISOString(), // Placeholder for createdAt
+        updatedAt: new Date().toISOString() // Placeholder for updatedAt
       };
 
       await dispatch(createUserAccount(parsedForm)).unwrap();

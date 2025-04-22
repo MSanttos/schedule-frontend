@@ -3,9 +3,10 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store/store";
-import { clearSelectedUser, fetchUserAccountById, updateUserAccount } from "../../store/slices/userAccountSlice";
+import { clearSelectedUser } from "../../store/slices/userAccountSlice";
 import { ArrowLeft, Save, User, Mail, Lock, Calendar, Flag, MapPin, Phone, CreditCard} from "lucide-react";
 import { useMaskedNavigation } from "../../hooks/useMaskedNavigation";
+import { fetchUserAccountById, updateUserAccount } from "../../store/thunks/AccountThunks";
 
 export const EditUserAccount = () => {
   const { id } = useParams();

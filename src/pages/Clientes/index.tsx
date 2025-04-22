@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../store/store';
-import { deleteUserAccount, fetchUserAccounts } from '../../store/slices/userAccountSlice';
+import { deleteUserAccount, fetchUserAccounts } from '../../store/thunks/AccountThunks';
 // import { useNavigate } from 'react-router-dom';
 import { Edit, Eye, Trash2, Plus } from 'lucide-react';
 import { useMaskedNavigation } from '../../hooks/useMaskedNavigation';
@@ -134,7 +134,7 @@ export const Clientes = () => {
                       <div className="text-sm text-gray-900">{user.phoneNumber}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{formatDate(user.birthDate)}</div>
+                      <div className="text-sm text-gray-900">{user.birthDate ? formatDate(user.birthDate) : 'Data não informada'}</div>
                       <div className="text-sm text-gray-500">{getMaritalStatusLabel(user.maritalStatus)}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
