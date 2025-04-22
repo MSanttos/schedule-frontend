@@ -1,5 +1,4 @@
 import { Calendar, Clock, Users, CheckCircle, AlertTriangle, ArrowRight, BarChart2, Settings, Plus, ClipboardList } from "lucide-react";
-// import { useNavigate } from "react-router-dom";
 import { useMaskedNavigation } from "../../hooks/useMaskedNavigation";
 
 export const Home = () => {
@@ -33,6 +32,9 @@ export const Home = () => {
           <h1 className="text-2xl font-bold text-gray-900">Bem-vindo de volta!</h1>
           <p className="mt-1 text-sm text-gray-500">Aqui está o que está acontecendo hoje.</p>
         </div>
+        {/* <Button success size="xs" color="primary">Teste</Button>
+        <Button success size="sm" color="secondary">Teste</Button>
+        <Button success className="bg-red-500 hover:bg-red-800">Teste</Button> */}
         <button
           onClick={() => navigate('/agendamentos')}
           className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"

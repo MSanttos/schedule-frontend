@@ -1,15 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store/store";
 import { clearSelectedUser, fetchUserAccountById, updateUserAccount } from "../../store/slices/userAccountSlice";
 import { ArrowLeft, Save, User, Mail, Lock, Calendar, Flag, MapPin, Phone, CreditCard} from "lucide-react";
+import { useMaskedNavigation } from "../../hooks/useMaskedNavigation";
 
 export const EditUserAccount = () => {
   const { id } = useParams();
   const dispatch = useDispatch<AppDispatch>();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const { selectedUser } = useSelector((state: RootState) => state.userAccounts);
 
   const [formData, setFormData] = useState({
@@ -34,6 +35,12 @@ export const EditUserAccount = () => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useMaskedNavigation()
+
+  const goToClientes = () => {
+    //onClick={() => navigate('/create-user')}
+    navigate('/clientes');
+  }
 
   useEffect(() => {
     if (id) {
@@ -59,6 +66,7 @@ export const EditUserAccount = () => {
         nationality: selectedUser.nationality || "",
         phoneNumber: selectedUser.phoneNumber || "",
         rg: selectedUser.rg || "",
+        cpf: selectedUser.cpf || "",
         postalCode: selectedUser.postalCode || "",
         address: selectedUser.streetAddress || "",
         city: selectedUser.city || "",
@@ -94,8 +102,8 @@ export const EditUserAccount = () => {
       if (id) {
         const payload: any = {
           ...formData,
-          phone: formData.phoneNumber,
-          zipCode: formData.postalCode,
+          phone: formData?.phoneNumber,
+          zipCode: formData?.postalCode,
         };
 
         delete payload.phoneNumber;
@@ -139,7 +147,7 @@ export const EditUserAccount = () => {
             </div>
           </div>
           <button
-            onClick={() => navigate(-1)}
+            onClick={goToClientes}
             className="mt-4 inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
           >
             <ArrowLeft className="-ml-0.5 mr-2 h-4 w-4" />
@@ -165,7 +173,7 @@ export const EditUserAccount = () => {
               </p>
             </div>
             <button
-              onClick={() => navigate(-1)}
+              onClick={goToClientes}
               className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
             >
               <ArrowLeft className="-ml-0.5 mr-2 h-4 w-4" />
@@ -217,7 +225,8 @@ export const EditUserAccount = () => {
                       type="date"
                       value={formData.birthDate}
                       onChange={handleChange}
-                      className="focus:ring-green-500 focus:border-green-500 block w-full pl-10 sm:text-sm border-gray-300 rounded-md py-2"
+                      readOnly
+                      className="focus:ring-green-500 focus:border-green-500 block w-full pl-10 sm:text-sm border-gray-300 rounded-md py-2 bg-gray-200"
                     />
                   </div>
                 </div>
@@ -236,11 +245,12 @@ export const EditUserAccount = () => {
                       type="text"
                       value={formData.cpf}
                       onChange={handleChange}
-                      className="focus:ring-green-500 focus:border-green-500 block w-full pl-10 sm:text-sm border-gray-300 rounded-md py-2"
+                      readOnly
+                      className="focus:ring-green-500 focus:border-green-500 block w-full pl-10 sm:text-sm border-gray-300 rounded-md py-2 bg-gray-200"
                     />
                   </div>
                 </div>
-                <div>
+                {/* <div>
                   <label htmlFor="rg" className="block text-sm font-medium text-gray-700 mb-1">
                     RG
                   </label>
@@ -254,10 +264,11 @@ export const EditUserAccount = () => {
                       type="text"
                       value={formData.rg}
                       onChange={handleChange}
-                      className="focus:ring-green-500 focus:border-green-500 block w-full pl-10 sm:text-sm border-gray-300 rounded-md py-2"
+                      readOnly
+                      className="focus:ring-green-500 focus:border-green-500 block w-full pl-10 sm:text-sm border-gray-300 rounded-md py-2 bg-gray-200"
                     />
                   </div>
-                </div>
+                </div> */}
 
                 <div>
                   <label htmlFor="gender" className="block text-sm font-medium text-gray-700 mb-1">
@@ -432,7 +443,7 @@ export const EditUserAccount = () => {
                   />
                 </div>
 
-                <div>
+                {/* <div>
                   <label htmlFor="country" className="block text-sm font-medium text-gray-700 mb-1">
                     País
                   </label>
@@ -444,7 +455,7 @@ export const EditUserAccount = () => {
                     onChange={handleChange}
                     className="focus:ring-green-500 focus:border-green-500 block w-full sm:text-sm border-gray-300 rounded-md py-2"
                   />
-                </div>
+                </div> */}
 
                 <div>
                   <label htmlFor="nationality" className="block text-sm font-medium text-gray-700 mb-1">
@@ -458,9 +469,10 @@ export const EditUserAccount = () => {
                       id="nationality"
                       name="nationality"
                       type="text"
+                      readOnly
                       value={formData.nationality}
                       onChange={handleChange}
-                      className="focus:ring-green-500 focus:border-green-500 block w-full pl-10 sm:text-sm border-gray-300 rounded-md py-2"
+                      className="focus:ring-green-500 focus:border-green-500 block w-full pl-10 sm:text-sm border-gray-300 rounded-md py-2 bg-gray-200"
                     />
                   </div>
                 </div>

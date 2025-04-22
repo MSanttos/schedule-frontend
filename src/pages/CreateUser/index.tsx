@@ -3,36 +3,21 @@ import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../../store/store';
 import { createUserAccount } from '../../store/slices/userAccountSlice';
-import { useNavigate } from 'react-router-dom';
+import { useMaskedNavigation } from "../../hooks/useMaskedNavigation";
+import { defaultUserForm, IUserForm } from "../../types/user";
 
 export const CreateUser = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const [form, setForm] = useState({
-    name: '',
-    email: '',
-    password: '',
-    birthDate: '',
-    nationality: '',
-    naturalness: '',
-    cpf: '',
-    rg: '',
-    phoneNumber: '',
-    cellPhone: '',
-    postalCode: '',
-    address: '',
-    number: '',
-    complement: '',
-    neighborhood: '',
-    city: '',
-    state: '',
-    gender: '',
-    maritalStatus: '',
-    createdBy: 'web_registration',
-  });
+    const navigate = useMaskedNavigation()
+    
+    const goToClientes = () => {
+      navigate('/clientes');
+    }
+
+  const [form, setForm] = useState<IUserForm>(defaultUserForm);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -81,6 +66,9 @@ export const CreateUser = () => {
       };
 
       await dispatch(createUserAccount(parsedForm)).unwrap();
+
+      setForm(defaultUserForm);
+
       navigate('/clientes');
     } catch (error) {
       console.error("Erro ao cadastrar usuário:", error);
@@ -105,7 +93,7 @@ export const CreateUser = () => {
               </p>
             </div>
             <button
-              onClick={() => navigate('/clientes')}
+              onClick={goToClientes}
               className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
             >
               Cancelar

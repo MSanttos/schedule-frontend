@@ -32,7 +32,7 @@ export const Footer = () => {
               </li>
               <li className="flex items-center">
                 <MapPin className="h-4 w-4 mr-2 text-green-400" />
-                São Paulo, SP
+                Minha Cidade, Estado
               </li>
             </ul>
           </div>
@@ -71,7 +71,7 @@ export const Footer = () => {
             &copy; {currentYear} AgendaPlus. Todos os direitos reservados.
           </p>
           <p className="mt-1">
-            Desenvolvido com ❤️ por sua equipe
+            Desenvolvido com ❤️ por (sua equipe ou seu nome).
           </p>
         </div>
       </div>

@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import axios from "axios";
 import { ArrowLeft, Edit, User, Mail, Phone, Calendar, MapPin, Flag, Heart, Home, CreditCard } from "lucide-react";
+import { useMaskedNavigation } from "../../hooks/useMaskedNavigation";
 
 interface UserDetails {
   id: string;
@@ -43,7 +44,16 @@ export const ViewUserDetails = () => {
   const [user, setUser] = useState<UserDetails | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
+  const navigate = useMaskedNavigation()
+  
+  const goToClientes = () => {
+    navigate('/clientes');
+  }
+
+  const goToEditUser = () => {
+    navigate(`/edit-user/${user?.id}`);
+  }
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -129,14 +139,14 @@ export const ViewUserDetails = () => {
             </div>
             <div className="flex space-x-3">
               <button
-                onClick={() => navigate(`/edit-user/${user.id}`)}
+                onClick={goToEditUser}
                 className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
               >
                 <Edit className="-ml-0.5 mr-2 h-4 w-4" />
                 Editar
               </button>
               <button
-                onClick={() => navigate('/clientes')}
+                onClick={goToClientes}
                 className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
               >
                 <ArrowLeft className="-ml-0.5 mr-2 h-4 w-4" />
