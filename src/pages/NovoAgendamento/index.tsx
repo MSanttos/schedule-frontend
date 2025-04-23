@@ -1,13 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Calendar, Clock, User, ChevronDown, X, Save } from "lucide-react";
+import { Calendar, ChevronDown, Clock, Save, User, X } from "lucide-react";
+import { ReactNode, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { ReactNode, useState } from "react";
+import { ScheduleFormData } from "../../models/schedule";
+import { AppDispatch, RootState } from "../../store/store";
+import { fetchUserAccounts } from "../../store/thunks/AccountThunks";
+import { createSchedule } from "../../store/thunks/ScheduleThunks";
 
 export const NovoAgendamento = () => {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<ScheduleFormData>({
     clientId: "",
+    clientName: "", // Adicionado
     serviceId: "",
+    serviceName: "", // Adicionado
     date: "",
     time: "",
     duration: "30",
@@ -16,16 +23,13 @@ export const NovoAgendamento = () => {
   });
 
   // Dados fictícios - substitua por chamadas à sua API
-  const clients = [
-    { id: "1", name: "Carlos Silva", email: "carlos@email.com" },
-    { id: "2", name: "Ana Oliveira", email: "ana@email.com" },
-    { id: "3", name: "Roberto Santos", email: "roberto@email.com" },
-  ];
+  const { list: clients, loading } = useSelector((state: RootState) => state.userAccounts);
+
 
   const services = [
-    { id: "1", name: "Consulta Médica", duration: 60, price: 200 },
-    { id: "2", name: "Massagem Terapêutica", duration: 45, price: 150 },
-    { id: "3", name: "Avaliação Física", duration: 30, price: 100 },
+    { id: "312886b1-9522-4b25-90fc-12b52774a977", name: "Consulta Médica", duration: 60, price: 200 },
+    { id: "312886b1-9522-4b25-90fc-12b52774a978", name: "Massagem Terapêutica", duration: 45, price: 150 },
+    { id: "312886b1-9522-4b25-90fc-12b52774a979", name: "Avaliação Física", duration: 30, price: 100 },
   ];
 
   const [selectedClient, setSelectedClient] = useState<{ id: string, name: string } | null>(null);
@@ -36,6 +40,17 @@ export const NovoAgendamento = () => {
   const [showClientDropdown, setShowClientDropdown] = useState(false);
   const [showServiceDropdown, setShowServiceDropdown] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const dispatch = useDispatch<AppDispatch>();
+
+  // const { list: users, loading, error } = useSelector((state: RootState) => state.userAccounts);
+
+  useEffect(() => {
+    console.log("Fetching user accounts...");
+    // Aqui você pode fazer a chamada para buscar os dados reais
+    dispatch(fetchUserAccounts());
+    //console para mostrar os dados vindos do fetchUserAccounts
+    
+  }, [dispatch]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -70,7 +85,8 @@ export const NovoAgendamento = () => {
     setSelectedClient(client);
     setFormData(prev => ({
       ...prev,
-      clientId: client.id
+      clientId: client.id,
+      clientName: client.name // Armazena o nome
     }));
     setShowClientDropdown(false);
     setErrors(prev => {
@@ -80,17 +96,14 @@ export const NovoAgendamento = () => {
     });
   };
 
-  const handleServiceSelect = (service: {
-    price: any;
-    duration: any; id: string, name: string 
-}) => {
+  const handleServiceSelect = (service: { id: string, name: string, duration: number, price: number }) => {
     setSelectedService(service);
     setFormData(prev => ({
       ...prev,
       serviceId: service.id,
+      serviceName: service.name, // Armazena o nome
       duration: service.duration.toString(),
       price: service.price.toString()
-      
     }));
     setShowServiceDropdown(false);
     setErrors(prev => {
@@ -116,14 +129,27 @@ export const NovoAgendamento = () => {
     e.preventDefault();
 
     if (validateForm()) {
-      // Aqui você faria a chamada à API para criar o agendamento
-      console.log("Dados do agendamento:", formData);
-
-      // Simulando sucesso no cadastro
-      alert("Agendamento criado com sucesso!");
-      navigate("/agendamentos");
+      dispatch(createSchedule({
+        clientId: formData.clientId,
+        clientName: formData.clientName, // Inclui o nome
+        serviceId: formData.serviceId,
+        serviceName: formData.serviceName, // Inclui o nome
+        date: formData.date,
+        time: formData.time,
+        duration: formData.duration,
+        notes: formData.notes,
+        status: formData.status,
+        price: formData.price || ""
+      }))
+        .then(() => {
+          navigate("/agendamentos");
+        })
+        .catch((err) => {
+          console.error("Erro ao criar agendamento:", err);
+        });
     }
   };
+
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -170,20 +196,20 @@ export const NovoAgendamento = () => {
 
                   {showClientDropdown && (
                     <div className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
-                      {clients.map((client) => (
+                      {loading && <div className="px-4 py-2 text-sm text-gray-500">Carregando...</div>}
+                      {!loading && clients.length === 0 && <div className="px-4 py-2 text-sm text-gray-500">Nenhum cliente encontrado</div>}
+                      {!loading && clients.map((client) => (
                         <div
                           key={client.id}
                           className="cursor-default select-none relative py-2 pl-3 pr-9 hover:bg-gray-100"
                           onClick={() => handleClientSelect(client)}
                         >
                           <div className="flex items-center">
-                            <span className="font-normal block truncate">
-                              {client.name}
-                            </span>
+                            <span className="font-normal block truncate">{client.name}</span>
                           </div>
                           {selectedClient?.id === client.id && (
                             <span className="absolute inset-y-0 right-0 flex items-center pr-4">
-                              <svg className="h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                              <svg className="h-5 w-5 text-green-500" viewBox="0 0 20 20" fill="currentColor">
                                 <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                               </svg>
                             </span>

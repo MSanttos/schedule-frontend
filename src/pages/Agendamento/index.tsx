@@ -1,55 +1,50 @@
-import { Calendar, Clock, Search, Plus, Frown, ChevronLeft, ChevronRight } from "lucide-react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { Calendar, ChevronLeft, ChevronRight, Clock, Frown, Plus, Search } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { fetchSchedules } from "../../store/thunks/ScheduleThunks";
 
 export const Agendamentos = () => {
   const navigate = useNavigate();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [searchTerm, setSearchTerm] = useState("");
+  const [appointments, setAppointments] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
 
-  // Dados fictícios - substitua pelos dados reais da sua aplicação
-  const appointments = [
-    {
-      id: 1,
-      clientName: "Carlos Silva",
-      service: "Consulta Médica",
-      date: new Date().toISOString().split('T')[0],
-      time: "09:00",
-      duration: "60 min",
-      status: "confirmado",
-      clientEmail: "carlos@email.com",
-      clientPhone: "(11) 98765-4321"
-    },
-    {
-      id: 2,
-      clientName: "Ana Oliveira",
-      service: "Massagem Terapêutica",
-      date: new Date().toISOString().split('T')[0],
-      time: "10:30",
-      duration: "45 min",
-      status: "confirmado",
-      clientEmail: "ana@email.com",
-      clientPhone: "(11) 91234-5678"
-    },
-    {
-      id: 3,
-      clientName: "Roberto Santos",
-      service: "Avaliação Física",
-      date: new Date().toISOString().split('T')[0],
-      time: "11:15",
-      duration: "30 min",
-      status: "pendente",
-      clientEmail: "roberto@email.com",
-      clientPhone: "(11) 92345-6789"
-    }
-  ];
+  const dispatch = useDispatch();
+
+  // 📅 Busca os agendamentos sempre que a data muda
+  useEffect(() => {
+    const loadSchedules = async () => {
+      setLoading(true);
+      try {
+        const dateStr = currentDate.toISOString().split('T')[0];
+        const response = await dispatch(fetchSchedules(dateStr) as any); // Usando dispatch
+        setAppointments(response.payload || []); // Acessa os dados via response.payload
+      } catch (error) {
+        console.error("Erro ao carregar agendamentos:", error);
+        setAppointments([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadSchedules();
+  }, [currentDate, dispatch]); // Adicione dispatch às dependências
 
   // Filtra os agendamentos por data e termo de busca
-  const filteredAppointments = appointments.filter(app =>
-    app.date === currentDate.toISOString().split('T')[0] &&
-    (app.clientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      app.service.toLowerCase().includes(searchTerm.toLowerCase()))
-  );
+  const filteredAppointments = appointments.filter(app => {
+    const appointmentDate = new Date(app.date).toISOString().split('T')[0];
+    const selectedDate = currentDate.toISOString().split('T')[0];
+    return (
+      appointmentDate === selectedDate &&
+      (app.notes.toLowerCase().includes(searchTerm.toLowerCase()) // Usando "notes" como campo de busca
+        // Ou adicione outros campos disponíveis (ex.: app.clientId)
+      )
+    );
+  });
 
   // Navegação entre dias
   const changeDate = (days: number) => {
@@ -144,23 +139,23 @@ export const Agendamentos = () => {
                   <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center">
                     <div className="flex items-center mb-3 sm:mb-0">
                       <div className="flex-shrink-0 h-10 w-10 rounded-full bg-green-100 flex items-center justify-center text-green-600 font-medium">
-                        {appointment.clientName.charAt(0)}
+                        {appointment.clientName ? appointment.clientName.charAt(0) : '?'}
                       </div>
                       <div className="ml-4">
                         <div className="text-sm font-medium text-gray-900">{appointment.clientName}</div>
-                        <div className="text-sm text-gray-500">{appointment.service}</div>
+                        <div className="text-sm text-gray-500">{appointment.serviceName}</div>
                       </div>
                     </div>
 
                     <div className="flex flex-col sm:items-end">
                       <div className="flex items-center">
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium mr-3 ${appointment.status === 'confirmado'
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium mr-3 ${appointment.status === 'confirmed'
                             ? 'bg-green-100 text-green-800'
-                            : appointment.status === 'pendente'
+                          : appointment.status === 'pending'
                               ? 'bg-yellow-100 text-yellow-800'
                               : 'bg-red-100 text-red-800'
                           }`}>
-                          {appointment.status === 'confirmado' ? 'Confirmado' : appointment.status === 'pendente' ? 'Pendente' : 'Cancelado'}
+                          {appointment.status === 'confirmed' ? 'Confirmado' : appointment.status === 'pending' ? 'Pendente' : 'Cancelado'}
                         </span>
                         <span className="text-sm font-medium text-gray-900">{appointment.time}</span>
                       </div>
