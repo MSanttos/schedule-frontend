@@ -11,7 +11,6 @@ export const Home = () => {
   const dispatch = useDispatch();
   const navigate = useMaskedNavigation();
 
-  const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentDate, setCurrentDate] = useState(new Date());
   const [appointments, setAppointments] = useState<any[]>([]);
@@ -25,17 +24,15 @@ export const Home = () => {
   // 📅 Busca os agendamentos sempre que a data muda
   useEffect(() => {
     const loadSchedules = async () => {
-      setLoading(true);
       try {
         const dateStr = currentDate.toISOString().split('T')[0];
         const response = await dispatch(fetchSchedules(dateStr) as any); // Usando dispatch
+        console.log("Carregando agendamentos...", response);
         setAppointments(response.payload || []); // Acessa os dados via response.payload
       } catch (error) {
         console.error("Erro ao carregar agendamentos:", error);
         setAppointments([]);
-      } finally {
-        setLoading(false);
-      }
+      } 
     };
     loadSchedules();
   }, [currentDate, dispatch]); // Adicione dispatch às dependências
@@ -52,12 +49,15 @@ export const Home = () => {
     );
   });
 
+  const pendingCount = filteredAppointments.filter(app => app.status === 'pending').length;
+  const confirmedCount = filteredAppointments.filter(app => app.status === 'confirmed').length;
+
   // Dados fictícios - substitua pelos dados reais da sua aplicação {como adicionar onCLick?}
   const stats = [
-    { id: 1, name: 'Agendamentos Hoje', value: filteredAppointments.length, icon: Calendar, change: '+2', changeType: 'positive', onClick: () => navigate('/agendamentos') },
-    { id: 2, name: 'Clientes Ativos', value: '84', icon: Users, change: '+5', changeType: 'positive', onClick: () => navigate('/clientes-ativos') },
-    { id: 3, name: 'Confirmados', value: '8', icon: CheckCircle, change: '+3', changeType: 'positive', onClick: () => navigate('/confirmados') },
-    { id: 4, name: 'Pendentes', value: '4', icon: AlertTriangle, change: '-1', changeType: 'negative', onClick: () => navigate('/pendentes') },
+    { id: 1, name: 'Agendamentos Hoje', value: filteredAppointments.length, icon: Calendar, change: '+2', changeType: 'positive', onClick: () => navigate('/agendamentos'), iconClass: 'text-orange-400' },
+    { id: 2, name: 'Clientes Ativos', value: '84', icon: Users, change: '+5', changeType: 'positive', onClick: () => navigate('/clientes-ativos'), iconClass: 'text-blue-500' },
+    { id: 3, name: 'Confirmados', value: confirmedCount, icon: CheckCircle, change: `+${confirmedCount - 5}`, changeType: 'positive', onClick: () => navigate('/confirmados'), iconClass: 'text-green-500', },
+    { id: 4, name: 'Pendentes', value: pendingCount, icon: AlertTriangle, change: '-1', changeType: 'negative', onClick: () => navigate('/pendentes'), iconClass: 'text-yellow-500', },
   ];
 
   // const upcomingAppointments = [
@@ -98,7 +98,8 @@ export const Home = () => {
             <div className="p-5">
               <div className="flex items-center">
                 <div className="flex-shrink-0">
-                  <item.icon className="h-6 w-6 text-gray-400" aria-hidden="true" />
+                  {/* <item.icon className="h-6 w-6 text-gray-400" aria-hidden="true" /> */}
+                  <item.icon className={`h-6 w-6 ${item.iconClass}`} aria-hidden="true" />
                 </div>
                 <div className="ml-5 w-0 flex-1">
                   <dl>
@@ -122,7 +123,7 @@ export const Home = () => {
         <div className="px-4 py-5 sm:px-6 border-b border-gray-200">
           <h3 className="text-lg leading-6 font-medium text-gray-900 flex items-center">
             <Clock className="h-5 w-5 text-gray-500 mr-2" />
-            Próximos Agendamentos
+            Próximos Agendamentos, {formatDate(currentDate)}
           </h3>
         </div>
         {filteredAppointments.length > 0 ? (
@@ -138,7 +139,7 @@ export const Home = () => {
                           ? 'bg-green-100 text-green-800'
                           : 'bg-yellow-100 text-yellow-800'
                           }`}>
-                          {appointment.status === 'confirmed' ? 'Confirmado' : 'pending'}
+                          {appointment.status === 'confirmed' ? 'Confirmado' : appointment.status === 'pending' ? 'Pendente' : 'Cancelado'}
                         </span>
                       </div>
                       <div className="mt-1 flex items-center text-sm text-gray-500">
