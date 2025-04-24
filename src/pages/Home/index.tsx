@@ -20,7 +20,6 @@ export const Home = () => {
     navigate('/create-user')
   }
 
-
   // 📅 Busca os agendamentos sempre que a data muda
   useEffect(() => {
     const loadSchedules = async () => {
