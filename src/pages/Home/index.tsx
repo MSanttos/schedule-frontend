@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { AlertTriangle, ArrowRight, BarChart2, Calendar, CheckCircle, ClipboardList, Clock, Frown, Plus, Settings, Users } from "lucide-react";
+import { AlertTriangle, ArrowRight, BarChart2, Calendar, CheckCircle, ClipboardList, Clock, Frown, Plus, Settings, Users, XCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useMaskedNavigation } from "../../hooks/useMaskedNavigation";
@@ -19,7 +19,7 @@ export const Home = () => {
     //onClick={() => navigate('/create-user')}
     navigate('/create-user')
   }
-  
+
 
   // 📅 Busca os agendamentos sempre que a data muda
   useEffect(() => {
@@ -32,7 +32,7 @@ export const Home = () => {
       } catch (error) {
         console.error("Erro ao carregar agendamentos:", error);
         setAppointments([]);
-      } 
+      }
     };
     loadSchedules();
   }, [currentDate, dispatch]); // Adicione dispatch às dependências
@@ -55,17 +55,12 @@ export const Home = () => {
   // Dados fictícios - substitua pelos dados reais da sua aplicação {como adicionar onCLick?}
   const stats = [
     { id: 1, name: 'Agendamentos Hoje', value: filteredAppointments.length, icon: Calendar, change: '+2', changeType: 'positive', onClick: () => navigate('/agendamentos'), iconClass: 'text-orange-400' },
-    { id: 2, name: 'Clientes Ativos', value: '84', icon: Users, change: '+5', changeType: 'positive', onClick: () => navigate('/clientes-ativos'), iconClass: 'text-blue-500' },
+    // { id: 2, name: 'Clientes Ativos', value: '84', icon: Users, change: '+5', changeType: 'positive', onClick: () => navigate('/clientes-ativos'), iconClass: 'text-blue-500' },
     { id: 3, name: 'Confirmados', value: confirmedCount, icon: CheckCircle, change: `+${confirmedCount - 5}`, changeType: 'positive', onClick: () => navigate('/confirmados'), iconClass: 'text-green-500', },
     { id: 4, name: 'Pendentes', value: pendingCount, icon: AlertTriangle, change: '-1', changeType: 'negative', onClick: () => navigate('/pendentes'), iconClass: 'text-yellow-500', },
+    { id: 5, name: 'Cancelados', value: '2', icon: XCircle, change: '-1', changeType: 'negative', onClick: () => navigate('/cancelados'), iconClass: 'text-red-500' },
   ];
 
-  // const upcomingAppointments = [
-  //   { id: 1, name: 'Carlos Silva', time: '09:00', service: 'Consulta Médica', status: 'confirmado' },
-  //   { id: 2, name: 'Ana Oliveira', time: '10:30', service: 'Massagem Terapêutica', status: 'confirmado' },
-  //   { id: 3, name: 'Roberto Santos', time: '11:15', service: 'Avaliação Física', status: 'pendente' },
-  //   { id: 4, name: 'Juliana Costa', time: '14:00', service: 'Psicoterapia', status: 'confirmado' },
-  // ];
   // Formata a data para exibição
   const formatDate = (date: Date) => {
     return date.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
@@ -98,7 +93,6 @@ export const Home = () => {
             <div className="p-5">
               <div className="flex items-center">
                 <div className="flex-shrink-0">
-                  {/* <item.icon className="h-6 w-6 text-gray-400" aria-hidden="true" /> */}
                   <item.icon className={`h-6 w-6 ${item.iconClass}`} aria-hidden="true" />
                 </div>
                 <div className="ml-5 w-0 flex-1">
