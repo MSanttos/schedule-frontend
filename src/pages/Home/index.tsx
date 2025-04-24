@@ -1,28 +1,75 @@
-import { Calendar, Clock, Users, CheckCircle, AlertTriangle, ArrowRight, BarChart2, Settings, Plus, ClipboardList } from "lucide-react";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { AlertTriangle, ArrowRight, BarChart2, Calendar, CheckCircle, ClipboardList, Clock, Frown, Plus, Settings, Users } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import { useMaskedNavigation } from "../../hooks/useMaskedNavigation";
+import { fetchSchedules } from "../../store/thunks/ScheduleThunks";
 
 export const Home = () => {
   // const navigate = useNavigate();
-  const navigate = useMaskedNavigation()
+  const dispatch = useDispatch();
+  const navigate = useMaskedNavigation();
+
+  const [loading, setLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [appointments, setAppointments] = useState<any[]>([]);
 
   const goToClientes = () => {
     //onClick={() => navigate('/create-user')}
     navigate('/create-user')
   }
-  // Dados fictícios - substitua pelos dados reais da sua aplicação
+  
+
+  // 📅 Busca os agendamentos sempre que a data muda
+  useEffect(() => {
+    const loadSchedules = async () => {
+      setLoading(true);
+      try {
+        const dateStr = currentDate.toISOString().split('T')[0];
+        const response = await dispatch(fetchSchedules(dateStr) as any); // Usando dispatch
+        setAppointments(response.payload || []); // Acessa os dados via response.payload
+      } catch (error) {
+        console.error("Erro ao carregar agendamentos:", error);
+        setAppointments([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadSchedules();
+  }, [currentDate, dispatch]); // Adicione dispatch às dependências
+
+  // Filtra os agendamentos por data e termo de busca
+  const filteredAppointments = appointments.filter(app => {
+    const appointmentDate = new Date(app.date).toISOString().split('T')[0];
+    const selectedDate = currentDate.toISOString().split('T')[0];
+    return (
+      appointmentDate === selectedDate &&
+      (app.notes.toLowerCase().includes(searchTerm.toLowerCase()) // Usando "notes" como campo de busca
+        // Ou adicione outros campos disponíveis (ex.: app.clientId)
+      )
+    );
+  });
+
+  // Dados fictícios - substitua pelos dados reais da sua aplicação {como adicionar onCLick?}
   const stats = [
-    { id: 1, name: 'Agendamentos Hoje', value: '12', icon: Calendar, change: '+2', changeType: 'positive' },
-    { id: 2, name: 'Clientes Ativos', value: '84', icon: Users, change: '+5', changeType: 'positive' },
-    { id: 3, name: 'Confirmados', value: '8', icon: CheckCircle, change: '+3', changeType: 'positive' },
-    { id: 4, name: 'Pendentes', value: '4', icon: AlertTriangle, change: '-1', changeType: 'negative' },
+    { id: 1, name: 'Agendamentos Hoje', value: filteredAppointments.length, icon: Calendar, change: '+2', changeType: 'positive', onClick: () => navigate('/agendamentos') },
+    { id: 2, name: 'Clientes Ativos', value: '84', icon: Users, change: '+5', changeType: 'positive', onClick: () => navigate('/clientes-ativos') },
+    { id: 3, name: 'Confirmados', value: '8', icon: CheckCircle, change: '+3', changeType: 'positive', onClick: () => navigate('/confirmados') },
+    { id: 4, name: 'Pendentes', value: '4', icon: AlertTriangle, change: '-1', changeType: 'negative', onClick: () => navigate('/pendentes') },
   ];
 
-  const upcomingAppointments = [
-    { id: 1, name: 'Carlos Silva', time: '09:00', service: 'Consulta Médica', status: 'confirmado' },
-    { id: 2, name: 'Ana Oliveira', time: '10:30', service: 'Massagem Terapêutica', status: 'confirmado' },
-    { id: 3, name: 'Roberto Santos', time: '11:15', service: 'Avaliação Física', status: 'pendente' },
-    { id: 4, name: 'Juliana Costa', time: '14:00', service: 'Psicoterapia', status: 'confirmado' },
-  ];
+  // const upcomingAppointments = [
+  //   { id: 1, name: 'Carlos Silva', time: '09:00', service: 'Consulta Médica', status: 'confirmado' },
+  //   { id: 2, name: 'Ana Oliveira', time: '10:30', service: 'Massagem Terapêutica', status: 'confirmado' },
+  //   { id: 3, name: 'Roberto Santos', time: '11:15', service: 'Avaliação Física', status: 'pendente' },
+  //   { id: 4, name: 'Juliana Costa', time: '14:00', service: 'Psicoterapia', status: 'confirmado' },
+  // ];
+  // Formata a data para exibição
+  const formatDate = (date: Date) => {
+    return date.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
+  };
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -47,7 +94,7 @@ export const Home = () => {
       {/* Estatísticas */}
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8">
         {stats.map((item) => (
-          <div key={item.id} className="bg-white overflow-hidden shadow rounded-lg">
+          <div key={item.id} className="bg-white overflow-hidden shadow rounded-lg cursor-pointer" onClick={item.onClick}>
             <div className="p-5">
               <div className="flex items-center">
                 <div className="flex-shrink-0">
@@ -78,47 +125,68 @@ export const Home = () => {
             Próximos Agendamentos
           </h3>
         </div>
-        <div className="divide-y divide-gray-200">
-          {upcomingAppointments.map((appointment) => (
-            <div key={appointment.id} className="px-4 py-4 sm:px-6 hover:bg-gray-50">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center">
-                      <p className="text-sm font-medium text-gray-900 truncate mr-2">{appointment.name}</p>
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${appointment.status === 'confirmado'
+        {filteredAppointments.length > 0 ? (
+          <div className="divide-y divide-gray-200">
+            {filteredAppointments.map((appointment) => (
+              <div key={appointment.id} className="px-4 py-4 sm:px-6 hover:bg-gray-50">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center">
+                        <p className="text-sm font-medium text-gray-900 truncate mr-2">{appointment.clientName}</p>
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${appointment.status === 'confirmed'
                           ? 'bg-green-100 text-green-800'
                           : 'bg-yellow-100 text-yellow-800'
-                        }`}>
-                        {appointment.status === 'confirmado' ? 'Confirmado' : 'Pendente'}
-                      </span>
-                    </div>
-                    <div className="mt-1 flex items-center text-sm text-gray-500">
-                      <span className="truncate">{appointment.service}</span>
+                          }`}>
+                          {appointment.status === 'confirmed' ? 'Confirmado' : 'pending'}
+                        </span>
+                      </div>
+                      <div className="mt-1 flex items-center text-sm text-gray-500">
+                        <span className="truncate">{appointment.serviceName}</span>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div className="ml-2 flex-shrink-0 flex flex-col items-end">
-                  <p className="text-sm font-medium text-gray-900">{appointment.time}</p>
-                  <button
-                    onClick={() => navigate(`/agendamentos/${appointment.id}`)}
-                    className="mt-1 text-sm text-green-600 hover:text-green-900 flex items-center"
-                  >
-                    Detalhes <ArrowRight className="ml-1 h-4 w-4" />
-                  </button>
+                  <div className="ml-2 flex-shrink-0 flex flex-col items-end">
+                    <p className="text-sm font-medium text-gray-900">{appointment.time}</p>
+                    <button
+                      onClick={() => navigate(`/agendamentos/${appointment.id}`)}
+                      className="mt-1 text-sm text-green-600 hover:text-green-900 flex items-center"
+                    >
+                      Detalhes <ArrowRight className="ml-1 h-4 w-4" />
+                    </button>
+                  </div>
                 </div>
               </div>
+            ))}
+          </div>
+        ) : (
+          <div className="px-4 py-12 text-center">
+            <Frown className="mx-auto h-12 w-12 text-gray-400" />
+            <h3 className="mt-2 text-sm font-medium text-gray-900">Nenhum agendamento encontrado</h3>
+            <p className="mt-1 text-sm text-gray-500">
+              {searchTerm
+                ? "Nenhum agendamento corresponde à sua busca."
+                : "Não há agendamentos para esta data."}
+            </p>
+            <div className="mt-6">
+              <button
+                onClick={() => navigate('/novo-agendamento')}
+                className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+              >
+                <Plus className="-ml-1 mr-2 h-5 w-5" />
+                Novo Agendamento
+              </button>
             </div>
-          ))}
-        </div>
-        <div className="px-4 py-4 sm:px-6 bg-gray-50 text-right">
-          <button
-            onClick={() => navigate('/agendamentos')}
-            className="text-sm font-medium text-green-600 hover:text-green-500"
-          >
-            Ver todos os agendamentos →
-          </button>
-        </div>
+          </div>
+        )}
+      </div>
+      <div className="px-4 py-4 sm:px-6 bg-gray-50 text-right">
+        <button
+          onClick={() => navigate('/agendamentos')}
+          className="text-sm font-medium text-green-600 hover:text-green-500"
+        >
+          Ver todos os agendamentos →
+        </button>
       </div>
 
       {/* Seção Rápida */}
