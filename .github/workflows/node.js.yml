@@ -1,56 +1,56 @@
-name: Frontend CI/CD # Nome do workflow exibido no GitHub Actions
+name: Frontend CI/CD
 
 on:
-  push:         # Roda o workflow em qualquer push (qualquer branch)
-  pull_request: # Roda o workflow em qualquer pull request
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
 
 jobs:
   prettier:
-    name: Prettier Check # Job que executa o Prettier
-    runs-on: ubuntu-latest # Usa o ambiente Ubuntu mais recente
+    name: Prettier Check
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout do código # Baixa o código da branch atual
+      - name: Checkout do código
         uses: actions/checkout@v3
         with:
-          ref: ${{ github.head_ref }} # Garante que o código da branch do PR seja usado
+          ref: ${{ github.head_ref }}
 
-      - name: Run Prettier # Executa o Prettier para formatar os arquivos
+      - name: Run Prettier
         uses: creyD/prettier_action@v4.3
         with:
-          prettier_options: --write **/*.{js,ts,tsx,json,md,yml,yaml} # Arquivos a serem formatados
+          prettier_options: --write **/*.{js,ts,tsx,json,md,yml,yaml}
 
   build:
-    name: Build Vite App # Job de build da aplicação Vite
-    if: github.ref == 'refs/heads/master' # Só roda se o push ou PR for para a branch master
+    name: Build Vite App
     runs-on: ubuntu-latest
-    needs: prettier # Só executa se o job de Prettier terminar com sucesso
+    needs: prettier
 
     steps:
-      - name: Checkout do código # Baixa o código da branch master
+      - name: Checkout do código
         uses: actions/checkout@v4
 
-      - name: Setup Node.js # Configura o ambiente com Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18 # Define a versão do Node.js
+          node-version: 18
 
-      - name: Instalar dependências # Instala os pacotes do projeto
+      - name: Instalar dependências
         run: npm install
 
-      - name: Build do projeto # Executa o build da aplicação
+      - name: Build do projeto
         run: npm run build
 
-      - name: Teste (simulado) # Simula execução de testes
+      - name: Teste (simulado)
         run: echo "Rodando testes fake..."
 
   deploy-dev:
-    name: Deploy (simulado) - Dev # Job de deploy simulado para ambiente de desenvolvimento
-    if: github.ref == 'refs/heads/master' # Só roda na branch master
+    name: Deploy (simulado) - Dev
     runs-on: ubuntu-latest
-    environment: dev # Define o ambiente como 'dev'
-    needs: build # Só roda após o build ter sucesso
+    environment: dev
+    needs: build
 
     steps:
-      - name: Echo do deploy # Simula o processo de deploy
+      - name: Echo do deploy
         run: echo "🎉 Deploy fake feito para o ambiente de DEV!"
