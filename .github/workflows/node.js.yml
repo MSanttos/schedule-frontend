@@ -1,43 +1,56 @@
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
-
-name: Frontend CI/CD
+name: Frontend CI/CD # Nome do workflow exibido no GitHub Actions
 
 on:
-  push:
-    branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
+  push:         # Roda o workflow em qualquer push (qualquer branch)
+  pull_request: # Roda o workflow em qualquer pull request
 
 jobs:
-  build:
-    name: Build Vite App
-    runs-on: ubuntu-latest
+  prettier:
+    name: Prettier Check # Job que executa o Prettier
+    runs-on: ubuntu-latest # Usa o ambiente Ubuntu mais recente para rodar
 
     steps:
-      - name: Checkout do código
+      - name: Checkout do código # Baixa o código da branch atual
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.head_ref }} # Garante que o código da branch do PR seja usado
+
+      - name: Run Prettier # Executa o Prettier para formatar os arquivos
+        uses: creyD/prettier_action@v4.3
+        with:
+          prettier_options: --write **/*.{js,ts,tsx,json,md,yml,yaml} # Aplica o Prettier a arquivos com essas extensões
+
+  build:
+    name: Build Vite App # Job de build da aplicação Vite
+    if: github.ref == 'refs/heads/master' # Só roda se o push ou PR for para a branch master
+    runs-on: ubuntu-latest # Usa o ambiente Ubuntu mais recente
+    needs: prettier # Só roda depois que o job Prettier for concluído com sucesso
+
+    steps:
+      - name: Checkout do código # Baixa o código da branch
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Setup Node.js # Configura o Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 18 # Define a versão do Node.js como 18
 
-      - name: Instalar dependências
+      - name: Instalar dependências # Instala as dependências do projeto
         run: npm install
 
-      - name: Build do projeto
+      - name: Build do projeto # Executa o build da aplicação
         run: npm run build
 
-      - name: Teste (simulado)
+      - name: Teste (simulado) # Teste fictício para simular execução de testes
         run: echo "Rodando testes fake..."
 
   deploy-dev:
-    name: Deploy (simulado) - Dev
-    runs-on: ubuntu-latest
-    environment: dev
-    needs: build
+    name: Deploy (simulado) - Dev # Job de deploy simulado para ambiente de desenvolvimento
+    if: github.ref == 'refs/heads/master' # Só roda se o push/PR for para a branch master
+    runs-on: ubuntu-latest # Usa o ambiente Ubuntu mais recente
+    environment: dev # Define o ambiente como 'dev' (pode ser usado para restrições de acesso ou aprovações)
+    needs: build # Só roda depois que o job de build for concluído com sucesso
 
     steps:
-      - name: Echo do deploy
+      - name: Echo do deploy # Mensagem simulando um deploy
         run: echo "🎉 Deploy fake feito para o ambiente de DEV!"
