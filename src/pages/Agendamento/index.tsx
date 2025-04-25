@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
+ 
 import { Calendar, ChevronLeft, ChevronRight, Clock, Frown, Plus, Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
@@ -11,7 +11,7 @@ export const Agendamentos = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [searchTerm, setSearchTerm] = useState("");
   const [appointments, setAppointments] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [, setLoading] = useState(false);
 
   const dispatch = useDispatch();
 
