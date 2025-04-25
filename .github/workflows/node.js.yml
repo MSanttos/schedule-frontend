@@ -7,51 +7,54 @@ on:
 jobs:
   prettier:
     name: Prettier Check # Job que executa o Prettier
-    runs-on: ubuntu-latest # Usa o ambiente Ubuntu mais recente para rodar
+    runs-on: ubuntu-latest # Usa o ambiente Ubuntu mais recente
 
     steps:
       - name: Checkout do código # Baixa o código da branch atual
         uses: actions/checkout@v3
         with:
           ref: ${{ github.head_ref }} # Garante que o código da branch do PR seja usado
+          token: ${{ secrets.GITHUB_TOKEN }} # Necessário para acessar repositório privado
 
       - name: Run Prettier # Executa o Prettier para formatar os arquivos
         uses: creyD/prettier_action@v4.3
         with:
-          prettier_options: --write **/*.{js,ts,tsx,json,md,yml,yaml} # Aplica o Prettier a arquivos com essas extensões
-          github_token: ${{ secrets.GITHUB_TOKEN }} # Necessário para repositórios privados
+          prettier_options: --write **/*.{js,ts,tsx,json,md,yml,yaml} # Arquivos a serem formatados
+          github_token: ${{ secrets.GITHUB_TOKEN }} # Token necessário para repositórios privados
 
   build:
     name: Build Vite App # Job de build da aplicação Vite
     if: github.ref == 'refs/heads/master' # Só roda se o push ou PR for para a branch master
-    runs-on: ubuntu-latest # Usa o ambiente Ubuntu mais recente
-    needs: prettier # Só roda depois que o job Prettier for concluído com sucesso
+    runs-on: ubuntu-latest
+    needs: prettier # Só executa se o job de Prettier terminar com sucesso
 
     steps:
-      - name: Checkout do código # Baixa o código da branch
+      - name: Checkout do código # Baixa o código da branch master
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }} # Necessário para acessar repositório privado
 
-      - name: Setup Node.js # Configura o Node.js
+      - name: Setup Node.js # Configura o ambiente com Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18 # Define a versão do Node.js como 18
+          node-version: 18 # Define a versão do Node.js
 
-      - name: Instalar dependências # Instala as dependências do projeto
+      - name: Instalar dependências # Instala os pacotes do projeto
         run: npm install
 
       - name: Build do projeto # Executa o build da aplicação
         run: npm run build
 
-      - name: Teste (simulado) # Teste fictício para simular execução de testes
+      - name: Teste (simulado) # Simula execução de testes
         run: echo "Rodando testes fake..."
 
   deploy-dev:
     name: Deploy (simulado) - Dev # Job de deploy simulado para ambiente de desenvolvimento
-    if: github.ref == 'refs/heads/master' # Só roda se o push/PR for para a branch master
-    runs-on: ubuntu-latest # Usa o ambiente Ubuntu mais recente
-    environment: dev # Define o ambiente como 'dev' (pode ser usado para restrições de acesso ou aprovações)
-    needs: build # Só roda depois que o job de build for concluído com sucesso
+    if: github.ref == 'refs/heads/master' # Só roda na branch master
+    runs-on: ubuntu-latest
+    environment: dev # Define o ambiente como 'dev'
+    needs: build # Só roda após o build ter sucesso
 
     steps:
-      - name: Echo do deploy # Mensagem simulando um deploy
+      - name: Echo do deploy # Simula o processo de deploy
         run: echo "🎉 Deploy fake feito para o ambiente de DEV!"
