@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+ 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { AlertTriangle, ArrowRight, BarChart2, Calendar, CheckCircle, ClipboardList, Clock, Frown, Plus, Settings, Users, XCircle } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -11,8 +11,8 @@ export const Home = () => {
   const dispatch = useDispatch();
   const navigate = useMaskedNavigation();
 
-  const [searchTerm, setSearchTerm] = useState("");
-  const [currentDate, setCurrentDate] = useState(new Date());
+  const [searchTerm,] = useState("");
+  const [currentDate, ] = useState(new Date());
   const [appointments, setAppointments] = useState<any[]>([]);
 
   const goToClientes = () => {

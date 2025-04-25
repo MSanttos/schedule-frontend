@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+ 
 import { BrowserRouter } from 'react-router-dom'
 import { Router } from './routes'
 
@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react'
 import './App.css'
 
 function App() {
-  const [path, setPath] = useState(window.location.pathname)
+  const [, setPath] = useState(window.location.pathname)
 
   useEffect(() => {
     // Esta função intercepta as mudanças de rota
