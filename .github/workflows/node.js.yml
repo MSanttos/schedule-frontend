@@ -14,13 +14,11 @@ jobs:
         uses: actions/checkout@v3
         with:
           ref: ${{ github.head_ref }} # Garante que o código da branch do PR seja usado
-          token: ${{ secrets.GITHUB_TOKEN }} # Necessário para acessar repositório privado
 
       - name: Run Prettier # Executa o Prettier para formatar os arquivos
         uses: creyD/prettier_action@v4.3
         with:
           prettier_options: --write **/*.{js,ts,tsx,json,md,yml,yaml} # Arquivos a serem formatados
-          github_token: ${{ secrets.GITHUB_TOKEN }} # Token necessário para repositórios privados
 
   build:
     name: Build Vite App # Job de build da aplicação Vite
@@ -31,8 +29,6 @@ jobs:
     steps:
       - name: Checkout do código # Baixa o código da branch master
         uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }} # Necessário para acessar repositório privado
 
       - name: Setup Node.js # Configura o ambiente com Node.js
         uses: actions/setup-node@v4
