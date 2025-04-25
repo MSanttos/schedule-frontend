@@ -19,6 +19,7 @@ jobs:
         uses: creyD/prettier_action@v4.3
         with:
           prettier_options: --write **/*.{js,ts,tsx,json,md,yml,yaml} # Aplica o Prettier a arquivos com essas extensões
+          github_token: ${{ secrets.GITHUB_TOKEN }} # Necessário para repositórios privados
 
   build:
     name: Build Vite App # Job de build da aplicação Vite
