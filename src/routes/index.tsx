@@ -5,6 +5,7 @@ import { Login } from "../components/Login/Login"
 import { NotFound } from "../components/NotFound"
 import { Register } from "../components/Register"
 import { Agendamentos } from "../pages/Agendamento"
+import { AtualizarAgendamento } from "../pages/AtualizarAgendamento"
 import { Clientes } from "../pages/Clientes"
 import { CreateUser } from "../pages/CreateUser"
 import { EditUserAccount } from "../pages/Edit"
@@ -32,15 +33,16 @@ export const Router = () => {
 
       {/* Rotas com Layout (Header + Footer) */}
       <Route element={<Layout />}>
-        <Route path="/view" element={<MainArea />} />
-        <Route path="/clientes" element={<Clientes />} />
-        <Route path="/agendamentos" element={<Agendamentos />} />
-        <Route path="/novo-agendamento" element={<NovoAgendamento />} />
-        <Route path="/home" element={<Home />} />
-        <Route path="/create-user" element={<CreateUser />} />
-        <Route path="/view-user/:id" element={<ViewUserDetails />} />
-        <Route path="/edit-user/:id" element={<EditUserAccount />} />
-      </Route>
+          <Route path="/view" element={<MainArea />} />
+          <Route path="/clientes" element={<Clientes />} />
+          <Route path="/agendamentos" element={<Agendamentos />} />
+          <Route path="/novo-agendamento" element={<NovoAgendamento />} />
+          <Route path="/atualiza-agendamento" element={<AtualizarAgendamento />} />
+          <Route path="/home" element={<Home />} />
+          <Route path="/create-user" element={<CreateUser />} />
+          <Route path="/view-user/:id" element={<ViewUserDetails />} />
+          <Route path="/edit-user/:id" element={<EditUserAccount />} />
+        </Route>
     </Routes>
   )
 }
