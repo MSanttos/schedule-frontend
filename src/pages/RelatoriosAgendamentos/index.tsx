@@ -1,15 +1,10 @@
- 
-
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { saveAs } from "file-saver";
-import { jsPDF } from "jspdf";
+ /* eslint-disable @typescript-eslint/no-explicit-any */
 import "jspdf-autotable";
-import autoTable from "jspdf-autotable";
 import { ChevronLeft, ChevronRight, Download, FileText, Frown, Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
+import { useExportData } from "../../hooks/useExportData";
 import { fetchSchedules } from "../../store/thunks/ScheduleThunks";
-
 
 export const RelatoriosAgendamentos = () => {
   const [startDate, setStartDate] = useState<Date>(new Date());
@@ -21,8 +16,8 @@ export const RelatoriosAgendamentos = () => {
   const [isOpenModal, setIsOpenModal] = useState(false);
 
   const dispatch = useDispatch();
-
   const toggleDropdown = () => setIsOpenModal(prev => !prev);
+  const { exportToJSON, exportToCSV, exportToPDF } = useExportData(appointments, () => periodo);
 
   useEffect(() => {
     const loadSchedules = async () => {
@@ -131,51 +126,6 @@ export const RelatoriosAgendamentos = () => {
     }
     return `${startDate.toLocaleDateString('pt-BR')} a ${endDate.toLocaleDateString('pt-BR')}`;
   };
-
-  // Exportação de dados
-  const exportToJSON = () => {
-    const dataStr = JSON.stringify(filteredAppointments, null, 2);
-    const blob = new Blob([dataStr], { type: "application/json" });
-    saveAs(blob, `agendamentos-${formatPeriod()}.json`);
-  };
-
-  const exportToCSV = () => {
-    const headers = ["Cliente", "Serviço", "Data", "Hora", "Status"];
-    const rows = filteredAppointments.map(app => [
-      app.clientName,
-      app.serviceName,
-      new Date(app.date).toLocaleDateString('pt-BR'),
-      app.time,
-      app.status === 'confirmed' ? 'Confirmado' : 'Cancelado'
-    ]);
-
-    let csv = headers.join(",") + "\n";
-    rows.forEach(row => csv += row.join(",") + "\n");
-
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-    saveAs(blob, `agendamentos-${formatPeriod()}.csv`);
-  };
-
-  const exportToPDF = () => {
-    const doc = new jsPDF();
-
-    // Ativa a extensão do autoTable no doc
-    autoTable(doc, {
-      head: [["Cliente", "Serviço", "Data", "Hora", "Status"]],
-      body: filteredAppointments.map(app => [
-        app.clientName,
-        app.serviceName,
-        new Date(app.date).toLocaleDateString('pt-BR'),
-        app.time,
-        app.status === 'confirmed' ? 'Confirmado' : 'Cancelado'
-      ]),
-      startY: 20
-    });
-
-    doc.text(`Relatório de Agendamentos - ${formatPeriod()}`, 10, 10);
-    doc.save(`agendamentos-${formatPeriod()}.pdf`);
-  };
-
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

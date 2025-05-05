@@ -1,60 +1,53 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+// src/hooks/useExportData.ts
 import { saveAs } from "file-saver";
 import { jsPDF } from "jspdf";
-import "jspdf-autotable";
+import autoTable from "jspdf-autotable";
 
-interface ExportOptions {
-  fileNamePrefix: string;
-  periodLabel: string;
-  data: any[];
-}
-
-export const useExport = () => {
-  const exportToJSON = ({ fileNamePrefix, periodLabel, data }: ExportOptions) => {
-    const dataStr = JSON.stringify(data, null, 2);
+export const useExportData = (appointments: any[], formatPeriod: () => string) => {
+  const exportToJSON = () => {
+    const dataStr = JSON.stringify(appointments, null, 2);
     const blob = new Blob([dataStr], { type: "application/json" });
-    saveAs(blob, `${fileNamePrefix}-${periodLabel}.json`);
+    saveAs(blob, `agendamentos-${formatPeriod()}.json`);
   };
 
-  const exportToCSV = ({ fileNamePrefix, periodLabel, data }: ExportOptions) => {
+  const exportToCSV = () => {
     const headers = ["Cliente", "Serviço", "Data", "Hora", "Status"];
-    const rows = data.map(app => [
+    const rows = appointments.map(app => [
       app.clientName,
       app.serviceName,
-      new Date(app.date).toLocaleDateString('pt-BR'),
+      new Date(app.date).toLocaleDateString("pt-BR"),
       app.time,
-      app.status === 'confirmed' ? 'Confirmado' : 'Cancelado'
+      app.status === "confirmed" ? "Confirmado" : "Cancelado"
     ]);
 
     let csv = headers.join(",") + "\n";
-    rows.forEach(row => csv += row.join(",") + "\n");
+    rows.forEach(row => {
+      csv += row.join(",") + "\n";
+    });
 
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-    saveAs(blob, `${fileNamePrefix}-${periodLabel}.csv`);
+    saveAs(blob, `agendamentos-${formatPeriod()}.csv`);
   };
 
-  const exportToPDF = ({ fileNamePrefix, periodLabel, data }: ExportOptions) => {
+  const exportToPDF = () => {
     const doc = new jsPDF();
 
-    (doc as any).autoTable({
+    autoTable(doc, {
       head: [["Cliente", "Serviço", "Data", "Hora", "Status"]],
-      body: data.map(app => [
+      body: appointments.map(app => [
         app.clientName,
         app.serviceName,
-        new Date(app.date).toLocaleDateString('pt-BR'),
+        new Date(app.date).toLocaleDateString("pt-BR"),
         app.time,
-        app.status === 'confirmed' ? 'Confirmado' : 'Cancelado'
+        app.status === "confirmed" ? "Confirmado" : "Cancelado"
       ]),
       startY: 20
     });
 
-    doc.text(`Relatório de Agendamentos - ${periodLabel}`, 10, 10);
-    doc.save(`${fileNamePrefix}-${periodLabel}.pdf`);
+    doc.text(`Relatório de Agendamentos - ${formatPeriod()}`, 10, 10);
+    doc.save(`agendamentos-${formatPeriod()}.pdf`);
   };
 
-  return {
-    exportToJSON,
-    exportToCSV,
-    exportToPDF
-  };
+  return { exportToJSON, exportToCSV, exportToPDF };
 };
