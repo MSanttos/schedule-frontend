@@ -43,7 +43,7 @@ export const Login = () => {
     // Simulação de uma chamada de API ou lógica de autenticação
     await new Promise((resolve) => setTimeout(resolve, 1000)); // Simula um tempo de espera
 
-    if (state.email === '123@email.com' && state.password === '123') {
+    if (state.email === 'teste@teste.com' && state.password === '123') {
       dispatch({ type: 'LOGIN_SUCCESS' });
       window.location.href = "/view"; // Redireciona para a página de visualização em caso de sucesso
     } else {

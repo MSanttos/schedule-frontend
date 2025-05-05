@@ -16,6 +16,9 @@
     "@tailwindcss/cli": "^4.1.4",
     "@tailwindcss/vite": "^4.1.4",
     "axios": "^1.8.4",
+    "file-saver": "^2.0.5",
+    "jspdf": "^3.0.1",
+    "jspdf-autotable": "^5.0.2",
     "lucide-react": "^0.503.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
@@ -26,6 +29,7 @@
   "devDependencies": {
     "@eslint/js": "^9.22.0",
     "@tailwindcss/postcss": "^4.1.4",
+    "@types/file-saver": "^2.0.7",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
     "@types/react-router-dom": "^5.3.3",
