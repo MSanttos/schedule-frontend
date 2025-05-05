@@ -12,6 +12,7 @@ import { EditUserAccount } from "../pages/Edit"
 import { Home } from "../pages/Home"
 import { MainArea } from "../pages/MainArea"
 import { NovoAgendamento } from "../pages/NovoAgendamento"
+import { RelatoriosAgendamentos } from "../pages/RelatoriosAgendamentos"
 import { ViewUserDetails } from "../pages/View"
 
 export const Router = () => {
@@ -42,6 +43,7 @@ export const Router = () => {
           <Route path="/create-user" element={<CreateUser />} />
           <Route path="/view-user/:id" element={<ViewUserDetails />} />
           <Route path="/edit-user/:id" element={<EditUserAccount />} />
+        <Route path="/relatorios-agendamentos" element={<RelatoriosAgendamentos />} />
         </Route>
     </Routes>
   )
