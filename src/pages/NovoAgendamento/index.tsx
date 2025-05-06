@@ -19,7 +19,7 @@ export const NovoAgendamento = () => {
     time: "",
     duration: "30",
     notes: "",
-    status: "pending"
+    status: "confirmed"
   });
 
   // Dados fictícios - substitua por chamadas à sua API
