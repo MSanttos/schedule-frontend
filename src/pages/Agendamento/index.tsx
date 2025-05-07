@@ -171,13 +171,15 @@ export const Agendamentos = () => {
                     <div className="flex space-x-2">
                       <button
                         // onClick={() => navigate(`/agendamento/${appointment.id}/editar`)}
-                        onClick={() => navigate('/atualiza-agendamento')}
+                        onClick={() => {
+                          navigate(`/atualiza-agendamento/${appointment.id}`)
+                        }}
                         className="inline-flex items-center px-3 py-1 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
                       >
                         Editar
                       </button>
                       <button
-                        onClick={() => navigate(`/agendamentos/${appointment.id}`)}
+                        onClick={() => navigate(`/atualiza-agendamento/${appointment.id}`)}
                         className="inline-flex items-center px-3 py-1 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
                       >
                         Detalhes
