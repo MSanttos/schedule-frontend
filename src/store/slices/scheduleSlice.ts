@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { initialState } from "../../models/schedule";
-import { createSchedule, deleteSchedule, fetchSchedules, updateSchedule } from "../thunks/ScheduleThunks";
+import { createSchedule, deleteSchedule, fetchSchedules, fetchSchedulesById, updateSchedule } from "../thunks/ScheduleThunks";
 
 const scheduleSlice = createSlice({
   name: 'schedules',
@@ -11,6 +11,10 @@ const scheduleSlice = createSlice({
       .addCase(fetchSchedules.fulfilled, (state, action) => {
         state.items = action.payload;
         state.loading = false;
+      })
+      .addCase(fetchSchedulesById.fulfilled, (state, action) => {
+        const index = state.items.findIndex(item => item.id === action.payload.id);
+        if (index >= 0) state.items[index] = action.payload;
       })
       .addCase(createSchedule.fulfilled, (state, action) => {
         state.items.push(action.payload);
