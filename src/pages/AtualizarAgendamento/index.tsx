@@ -1,29 +1,48 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Calendar, ChevronDown, Clock, Save, User, X } from "lucide-react";
 import { ReactNode, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { ScheduleFormData } from "../../models/schedule";
-import { AppDispatch, RootState } from "../../store/store";
-import { fetchUserAccounts } from "../../store/thunks/AccountThunks";
-import { createSchedule } from "../../store/thunks/ScheduleThunks";
+import { AppDispatch } from "../../store/store";
+// import { fetchUserAccounts } from "../../store/thunks/AccountThunks";
+import { useParams } from "react-router-dom";
+import { fetchSchedulesById } from "../../store/thunks/ScheduleThunks";
+
+interface ScheduleData {
+  id: string;
+  clientId: string;
+  clientName: string;
+  serviceId: string;
+  serviceName: string;
+  date: string;
+  time: string;
+  duration: string;
+  notes: string;
+  status: string;
+  price: number;
+  createdAt: string;
+  updatedAt: string | null;
+  createdBy: string;
+  updatedBy: string | null;
+}
 
 export const AtualizarAgendamento = () => {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState<ScheduleFormData>({
-    clientId: "",
-    clientName: "", // Adicionado
-    serviceId: "",
-    serviceName: "", // Adicionado
-    date: "",
-    time: "",
-    duration: "30",
-    notes: "",
-    status: "pending"
+  const [formData, setFormData] = useState({
+    clientName: '',
+    serviceName: '',
+    date: '',
+    time: '',
+    duration: '',
+    notes: '',
+    price: 0,
+    status: ''
   });
 
+  console.log('FORMDATA: ', formData)
+
   // Dados fictícios - substitua por chamadas à sua API
-  const { list: clients, loading } = useSelector((state: RootState) => state.userAccounts);
+  // const { list: clients, loading } = useSelector((state: RootState) => state.userAccounts);
 
 
   const services = [
@@ -32,25 +51,84 @@ export const AtualizarAgendamento = () => {
     { id: "312886b1-9522-4b25-90fc-12b52774a979", name: "Avaliação Física", duration: 30, price: 100 },
   ];
 
-  const [selectedClient, setSelectedClient] = useState<{ id: string, name: string } | null>(null);
+  // const [selectedClient, setSelectedClient] = useState<{ id: string, name: string } | null>(null);
   const [selectedService, setSelectedService] = useState<{
     price: any;
     duration: ReactNode; id: string, name: string
   } | null>(null);
-  const [showClientDropdown, setShowClientDropdown] = useState(false);
+  const [selectedStatus, setSelectedStatus] = useState<{
+    id: string;
+    value: string;
+    label: string;
+    name: string;
+  } | null>(null);
+  // const [showClientDropdown, setShowClientDropdown] = useState(false);
   const [showServiceDropdown, setShowServiceDropdown] = useState(false);
+  const [showStatusDropdown, setShowStatusDropdown] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const dispatch = useDispatch<AppDispatch>();
+  const { id } = useParams<{ id: string }>();
+
+  //status agendamento
+  const statusOptions = [
+    { id: "pending", value: "pending", label: "Pendente", name: "Pendente" },
+    { id: "confirmed", value: "confirmed", label: "Confirmado", name: "Confirmado" },
+    { id: "canceled", value: "canceled", label: "Cancelado", name: "Cancelado" },
+  ];
+
+  const handleStatusSelect = (status: { id: string, value: string, label: string }) => {
+      setSelectedStatus({ ...status, name: status.label }); // Add the 'name' property
+      setFormData(prev => ({
+        ...prev,
+        status: status.value
+      }));
+      setShowStatusDropdown(false);
+      setErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors.status;
+        return newErrors;
+      });
+    };
 
   // const { list: users, loading, error } = useSelector((state: RootState) => state.userAccounts);
 
   useEffect(() => {
-    console.log("Fetching user accounts...");
-    // Aqui você pode fazer a chamada para buscar os dados reais
-    dispatch(fetchUserAccounts());
-    //console para mostrar os dados vindos do fetchUserAccounts
+    console.log("Fetching Schedule...");
+    if (id) {
+      dispatch(fetchSchedulesById(id))
+        .unwrap()
+        .then((data: ScheduleData) => {
+          // Preenche o formData com os dados recebidos
+          setFormData({
+            clientName: data.clientName,
+            serviceName: data.serviceName,
+            date: data.date,
+            time: data.time,
+            duration: data.duration,
+            notes: data.notes,
+            price: data.price,
+            status: data.status
+          });
 
-  }, [dispatch]);
+          // Define o serviço selecionado
+          const service = services.find(s => s.id === data.serviceId);
+          if (service) {
+            setSelectedService(service);
+          }
+
+          // Define o status selecionado
+          const status = statusOptions.find(s => s.value === data.status);
+          if (status) {
+            setSelectedStatus(status);
+          }
+        })
+        .catch(error => {
+          console.error("Error fetching schedule:", error);
+        });
+    } else {
+      console.error("ID is undefined");
+    }
+  }, [dispatch, id]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -81,73 +159,10 @@ export const AtualizarAgendamento = () => {
     }
   };
 
-  const handleClientSelect = (client: { id: string, name: string }) => {
-    setSelectedClient(client);
-    setFormData(prev => ({
-      ...prev,
-      clientId: client.id,
-      clientName: client.name // Armazena o nome
-    }));
-    setShowClientDropdown(false);
-    setErrors(prev => {
-      const newErrors = { ...prev };
-      delete newErrors.clientId;
-      return newErrors;
-    });
-  };
-
-  const handleServiceSelect = (service: { id: string, name: string, duration: number, price: number }) => {
-    setSelectedService(service);
-    setFormData(prev => ({
-      ...prev,
-      serviceId: service.id,
-      serviceName: service.name, // Armazena o nome
-      duration: service.duration.toString(),
-      price: service.price.toString()
-    }));
-    setShowServiceDropdown(false);
-    setErrors(prev => {
-      const newErrors = { ...prev };
-      delete newErrors.serviceId;
-      return newErrors;
-    });
-  };
-
-  const validateForm = () => {
-    const newErrors: Record<string, string> = {};
-
-    if (!formData.clientId) newErrors.clientId = "Selecione um cliente";
-    if (!formData.serviceId) newErrors.serviceId = "Selecione um serviço";
-    if (!formData.date) newErrors.date = "Informe a data";
-    if (!formData.time) newErrors.time = "Informe o horário";
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (validateForm()) {
-      dispatch(createSchedule({
-        clientId: formData.clientId,
-        clientName: formData.clientName, // Inclui o nome
-        serviceId: formData.serviceId,
-        serviceName: formData.serviceName, // Inclui o nome
-        date: formData.date,
-        time: formData.time,
-        duration: formData.duration,
-        notes: formData.notes,
-        status: formData.status,
-        price: formData.price || ""
-      }))
-        .then(() => {
-          navigate("/agendamentos");
-        })
-        .catch((err) => {
-          console.error("Erro ao criar agendamento:", err);
-        });
-    }
+    console.log('foi')
   };
 
 
@@ -156,7 +171,7 @@ export const AtualizarAgendamento = () => {
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl font-bold text-gray-900 flex items-center">
           <Calendar className="h-6 w-6 text-gray-500 mr-2" />
-          Novo Agendamento
+          Atualizar Agendamento
         </h1>
         <button
           onClick={() => navigate("/agendamentos")}
@@ -181,64 +196,13 @@ export const AtualizarAgendamento = () => {
                   Cliente *
                 </label>
                 <div className="relative">
-                  <button
-                    type="button"
-                    onClick={() => setShowClientDropdown(!showClientDropdown)}
-                    className={`relative w-full bg-white border ${errors.clientId ? 'border-red-300' : 'border-gray-300'} rounded-md shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:outline-none focus:ring-1 ${errors.clientId ? 'focus:ring-red-500 focus:border-red-500' : 'focus:ring-green-500 focus:border-green-500'} sm:text-sm`}
-                  >
-                    <span className="block truncate">
-                      {selectedClient ? selectedClient.name : "Selecione um cliente"}
-                    </span>
-                    <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                      <ChevronDown className="h-5 w-5 text-gray-400" />
-                    </span>
-                  </button>
-
-                  {showClientDropdown && (
-                    <div className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
-                      {loading && <div className="px-4 py-2 text-sm text-gray-500">Carregando...</div>}
-                      {!loading && clients.length === 0 && <div className="px-4 py-2 text-sm text-gray-500">Nenhum cliente encontrado</div>}
-                      {!loading && clients.map((client) => (
-                        <div
-                          key={client.id}
-                          className="cursor-default select-none relative py-2 pl-3 pr-9 hover:bg-gray-100"
-                          onClick={() => handleClientSelect(client)}
-                        >
-                          <div className="flex items-center">
-                            <span className="font-normal block truncate">{client.name}</span>
-                          </div>
-                          {selectedClient?.id === client.id && (
-                            <span className="absolute inset-y-0 right-0 flex items-center pr-4">
-                              <svg className="h-5 w-5 text-green-500" viewBox="0 0 20 20" fill="currentColor">
-                                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                              </svg>
-                            </span>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  {errors.clientId && (
-                    <p className="mt-2 text-sm text-red-600">{errors.clientId}</p>
-                  )}
+                  <input
+                    type="text"
+                    readOnly
+                    value={formData.clientName || "Nenhum cliente selecionado"}
+                    className="w-full bg-gray-100 text-gray-700 border border-gray-300 rounded-md px-3 py-2 cursor-not-allowed"
+                  />
                 </div>
-
-                {selectedClient && (
-                  <div className="mt-2 flex items-center">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setSelectedClient(null);
-                        setFormData(prev => ({ ...prev, clientId: "" }));
-                      }}
-                      className="text-red-600 hover:text-red-900"
-                    >
-                      <X className="h-4 w-4" />
-                    </button>
-                    <span className="ml-2 text-sm text-gray-500">{clients.find(c => c.id === selectedClient.id)?.email}</span>
-                  </div>
-                )}
               </div>
             </div>
 
@@ -266,31 +230,6 @@ export const AtualizarAgendamento = () => {
                       <ChevronDown className="h-5 w-5 text-gray-400" />
                     </span>
                   </button>
-
-                  {showServiceDropdown && (
-                    <div className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
-                      {services.map((service) => (
-                        <div
-                          key={service.id}
-                          className="cursor-default select-none relative py-2 pl-3 pr-9 hover:bg-gray-100"
-                          onClick={() => handleServiceSelect(service)}
-                        >
-                          <div className="flex items-center">
-                            <span className="font-normal block truncate">
-                              {service.name} ({service.duration} min)
-                            </span>
-                          </div>
-                          {selectedService?.id === service.id && (
-                            <span className="absolute inset-y-0 right-0 flex items-center pr-4">
-                              <svg className="h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                              </svg>
-                            </span>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  )}
 
                   {errors.serviceId && (
                     <p className="mt-2 text-sm text-red-600">{errors.serviceId}</p>
@@ -358,26 +297,6 @@ export const AtualizarAgendamento = () => {
                   )}
                 </div>
               </div>
-
-              <div className="mt-4">
-                <label htmlFor="duration" className="block text-sm font-medium text-gray-700 mb-1">
-                  Duração (minutos)
-                </label>
-                <select
-                  id="duration"
-                  name="duration"
-                  value={formData.duration}
-                  onChange={handleChange}
-                  className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm rounded-md"
-                >
-                  <option value="15">15 minutos</option>
-                  <option value="30">30 minutos</option>
-                  <option value="45">45 minutos</option>
-                  <option value="60">60 minutos</option>
-                  <option value="90">90 minutos</option>
-                  <option value="120">120 minutos</option>
-                </select>
-              </div>
             </div>
 
             {/* Seção Observações */}
@@ -411,31 +330,31 @@ export const AtualizarAgendamento = () => {
               <div className="relative">
                 <button
                   type="button"
-                  onClick={() => setShowServiceDropdown(!showServiceDropdown)}
+                  onClick={() => setShowStatusDropdown(!showStatusDropdown)}
                   className={`relative w-full bg-white border ${errors.serviceId ? 'border-red-300' : 'border-gray-300'} rounded-md shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:outline-none focus:ring-1 ${errors.serviceId ? 'focus:ring-red-500 focus:border-red-500' : 'focus:ring-green-500 focus:border-green-500'} sm:text-sm`}
                 >
                   <span className="block truncate">
-                    {selectedService ? selectedService.name : "Selecione um serviço"}
+                      {selectedStatus ? statusOptions.find(option => option.value === formData.status)?.label : "Selecione um status"}
                   </span>
                   <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
                     <ChevronDown className="h-5 w-5 text-gray-400" />
                   </span>
                 </button>
 
-                {showServiceDropdown && (
+                {showStatusDropdown && (
                   <div className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
-                    {services.map((service) => (
+                      {statusOptions.map((statusOptionsSchedule) => (
                       <div
-                        key={service.id}
+                          key={statusOptionsSchedule.id}
                         className="cursor-default select-none relative py-2 pl-3 pr-9 hover:bg-gray-100"
-                        onClick={() => handleServiceSelect(service)}
+                          onClick={() => handleStatusSelect(statusOptionsSchedule)}
                       >
                         <div className="flex items-center">
                           <span className="font-normal block truncate">
-                            {service.name} ({service.duration} min)
+                              {statusOptionsSchedule.name}
                           </span>
                         </div>
-                        {selectedService?.id === service.id && (
+                          {statusOptionsSchedule?.id === statusOptionsSchedule.id && (
                           <span className="absolute inset-y-0 right-0 flex items-center pr-4">
                             <svg className="h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                               <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
@@ -451,24 +370,6 @@ export const AtualizarAgendamento = () => {
                   <p className="mt-2 text-sm text-red-600">{errors.serviceId}</p>
                 )}
               </div>
-
-              {selectedService && (
-                <div className="mt-2 flex items-center">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setSelectedService(null);
-                      setFormData(prev => ({ ...prev, serviceId: "", duration: "30" }));
-                    }}
-                    className="text-red-600 hover:text-red-900"
-                  >
-                    <X className="h-4 w-4" />
-                  </button>
-                  <span className="ml-2 text-sm text-gray-500">
-                    Duração: {selectedService.duration} min • Preço: R$ {selectedService.price.toFixed(2)}
-                  </span>
-                </div>
-              )}
             </div>
             </div>
           </div>
