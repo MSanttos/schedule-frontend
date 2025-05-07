@@ -15,6 +15,15 @@ export const createSchedule = createAsyncThunk('schedules/create', async (data: 
   return response.data;
 });
 
+export const fetchSchedulesById = createAsyncThunk('schedules/fetchById', async (id: string) => {
+  const response = await api.get(`/api/schedule/getScheduleById/${id}`); // ou o endpoint correto da sua API
+
+  console.log('data: ', response.data)
+  return response.data;
+  }
+);
+
+
 export const updateSchedule = createAsyncThunk('schedules/update', async (data: Schedule) => {
   const response = await api.put(`/schedules/${data.id}`, data);
   return response.data;
