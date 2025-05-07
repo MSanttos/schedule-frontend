@@ -38,7 +38,7 @@ export const Router = () => {
           <Route path="/clientes" element={<Clientes />} />
           <Route path="/agendamentos" element={<Agendamentos />} />
           <Route path="/novo-agendamento" element={<NovoAgendamento />} />
-          <Route path="/atualiza-agendamento" element={<AtualizarAgendamento />} />
+          <Route path="/atualiza-agendamento/:id" element={<AtualizarAgendamento />} />
           <Route path="/home" element={<Home />} />
           <Route path="/create-user" element={<CreateUser />} />
           <Route path="/view-user/:id" element={<ViewUserDetails />} />
